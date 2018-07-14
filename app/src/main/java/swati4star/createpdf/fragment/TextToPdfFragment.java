@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Objects;
 
 import swati4star.createpdf.R;
@@ -147,16 +149,37 @@ public class TextToPdfFragment extends Fragment {
             case FILE_SELECT_CODE:
                 if (resultCode == RESULT_OK) {
                     Uri uri = data.getData();
-                    String path = uri.getPath();
+                    readTextFile(uri);
                     Log.e("log","auth"+uri.getAuthority());
                     Log.e("log","encpath : "+uri.getEncodedPath());
                     Log.e("log","Path : "+uri.getPath());
-                    TEXT_FILE_NAME = path;
                 }
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+
+    private void readTextFile(Uri uri) {
+        InputStream inputStream = null;
+        try {
+            inputStream = getActivity().getContentResolver().openInputStream(uri);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    inputStream));
+
+            String line;
+            Log.i("","open text file - content"+"\n");
+            while ((line = reader.readLine()) != null) {
+                Log.i("",line+"\n");
+            }
+            reader.close();
+            inputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
